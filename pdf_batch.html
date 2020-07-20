@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="he">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <meta name="citation_title" content="עיבוד אוטומטי עם מסמכי PDF רבים" />
+      <meta name="citation_author" content="Moritz Mähr" />
+      <meta name="citation_publication_date" content="2020-01-30" />
+      <meta name="citation_journal_title" content="Programming Historian" />
+      <meta name="citation_public_url" content="https://programminghistorian.org/en/lessons/working-with-batches-of-pdf-files" />
+      <!--https://dev.twitter.com/cards/-->
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:site" content="@ProgHist" />
+      <meta name="twitter:title" content="עיבוד אוטומטי של מסמכי PDF רבים" />
+      <meta name="twitter:description" content="Learn how to perform OCR and text extraction with free command line tools like Tesseract and Poppler and how to get an overview of large numbers of PDF documents using topic modeling." />
+      <meta name="twitter:image" content="https://programminghistorian.org/gallery/working-with-batches-of-pdf-files.png" />
+      <link rel="shortcut icon" href="/images/favicons/en_favicon.ico" type="image/x-icon">
+      <meta name="viewport" content="width=device-width">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+      <link href='/feed.xml' rel='alternate' type='application/atom+xml'>
+      <title>עיבוד אוטומטי של מסמכי PDF רבים</title>
+      <link href="https://fonts.googleapis.com/css?family=Crete+Round|Open+Sans|Quattrocento|Roboto|Roboto+Condensed" rel="stylesheet">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous" media="all">
+      <link rel="stylesheet" href="./css/github.css">
+      <link rel="stylesheet" href="./css/style.css">
+   </head>
+   <body>
+      <div class="alert alert-success sitewide-alert text-center">
+         <h2>Digital Humanities - BGU's Computer Science Department</h2>
+      </div>
+      <nav dir="rtl" class="hide-screen navbar navbar-toggleable-sm navbar-dark bg-dark"
+         style="background-color: #444444" role="navigation">
+         <!--<div class="container">-->
+         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+            data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+            aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+         </button>
+         <a class="navbar-brand" href="/">ההיסטוריון המתכנת</a>
+      </nav>
+      <div class="hide-screen">
+         <main>
+            <div class="hide-screen">
+               <header>
+                  <div class="container-fluid">
+                     <div class="container expanded">
+                     </div>
+                  </div>
+            </div>
+            <div class="container-fluid header-bottom">
+            <div dir="rtl" class="container expanded">
+            <div class="d-flex flex-wrap flex-md-row flex-column justify-content-between">
+            <div class="metarow">
+            <h4>פורסם בתאריך</h4> 2020-01-30
+            </div>
+            <div class="metarow">
+            <h4>מפרסם</h4> Moritz Mähr
+            </div>
+            <div class="metarow">
+            <h4>מתרגמים</h4> בוריס צירקין ועמית כהן
+            </div>
+            <div class="metarow">
+            <h4>רמת קושי</h4> 
+            בינונית
+            </div>
+            </div>
+            </div>
+            </div>
+            </header>
+            <div class="container">
+               <div class="content">
+                  <h1 id="a-table-of-contents">תוכן עניינים</h1>
+                  <h2 dir="rtl" class="no_toc" id="contents">נושאים</h2>
+                  <ul dir="rtl" id="markdown-toc">
+                     <li><a href="#a-table-of-contents" id="markdown-toc-a-table-of-contents">תוכן עניינים</a></li>
+                     <li>
+                        <a href="#overview" id="markdown-toc-overview">סקירה כללית</a>    
+                        <ul>
+                           <li><a href="#motivation" id="markdown-toc-motivation">מוטיבציה</a></li>
+                           <li><a href="#scope" id="markdown-toc-scope">קהל יעד</a></li>
+                           <li><a href="#objectives" id="markdown-toc-objectives">מטרות השיעור</a></li>
+                        </ul>
+                     </li>
+                     <li>
+                        <a href="#prerequisites" id="markdown-toc-prerequisites">דרישות קודמות</a>    
+                        <ul>
+                           <li><a href="#skills" id="markdown-toc-skills">כישורים</a></li>
+                           <li>
+                              <a href="#software" id="markdown-toc-software">תוכנות</a>        
+                              <ul>
+                                 <li><a href="#windows-10" id="markdown-toc-windows-10">ווינדוס 10</a></li>
+                                 <li><a href="#macos" id="markdown-toc-macos">מאק OS</a></li>
+                                 <li><a href="#linux" id="markdown-toc-linux">לינוקס</a></li>
+                                 <li><a href="#topic-modelling" id="markdown-toc-topic-modelling">מידול נושאים</a></li>
+                              </ul>
+                           </li>
+                           <li><a href="#data" id="markdown-toc-data">דאטא</a></li>
+                        </ul>
+                     </li>
+                     <li>
+                        <a href="#assessing-your-pdfs" id="markdown-toc-assessing-your-pdfs">הערכת קבצי ה-PDF</a>    
+                        <ul>
+                           <li><a href="#text-recognition-in-pdf-files" id="markdown-toc-text-recognition-in-pdf-files">זיהוי טקסט בקבצי PDF</a></li>
+                           <li><a href="#extract-embedded-text-from-pdfs" id="markdown-toc-extract-embedded-text-from-pdfs">חילוץ טקסט מובנה מקבצי PDF</a></li>
+                           <li><a href="#extract-embedded-images-from-pdfs" id="markdown-toc-extract-embedded-images-from-pdfs">חילוץ תמונות מובנות מקבצי PDF</a></li>
+                           <li><a href="#combine-images-and-pdfs-into-a-single-pdf" id="markdown-toc-combine-images-and-pdfs-into-a-single-pdf">שילוב תמונות ומסמכי PDF למסמך יחיד</a></li>
+                           <li>
+                              <a href="#use-topic-modelling-to-analyze-the-corpus" id="markdown-toc-use-topic-modelling-to-analyze-the-corpus">שימוש במידול נושאים לצורך ניתוח הקורפוס</a>        
+                              <ul>
+                                 <li><a href="#download-the-corpus" id="markdown-toc-download-the-corpus">הורדת הקורפוס</a></li>
+                                 <li><a href="#prepare-and-clean-up-the-corpus" id="markdown-toc-prepare-and-clean-up-the-corpus">הכנת ונקיון הקורפוס</a></li>
+                                 <li><a href="#create-the-topic-model" id="markdown-toc-create-the-topic-model">ביצוע מידול הנושאים</a></li>
+                                 <li><a href="#evaluate-the-topic-model" id="markdown-toc-evaluate-the-topic-model">הערכת תוצאות מידול הנושאים</a></li>
+                              </ul>
+                           </li>
+                        </ul>
+                     </li>
+                     <li><a href="#hebrew_pdfs" id="markdown-toc-hebrew_pdfs">עבודה עם מסמכי PDF בעברית</a></li>
+                     <li>
+                        <a href="#concluding-remarks" id="markdown-toc-concluding-remarks">הערות לסיום</a>    
+                        <ul>
+                           <li><a href="#alternatives" id="markdown-toc-alternatives">תחלופות</a></li>
+                        </ul>
+                     </li>
+                  </ul>
+                  <h1 dir="rtl" id="overview">סקירה כללית</h1>
+                  <h2 dir="rtl" id="motivation">מוטיבציה</h2>
+                  <p dir="rtl">חוקרים למדעי הרוח עובדים לעיתים קרובות עם מקורות מבוססי טקסט - היסטוריים או עכשויים. לרוב, המידע נשמר במסמכים מסוג <a href="https://en.wikipedia.org/wiki/PDF">Portable Document Format (PDF)</a>. המסמכים יכולים להיות מגוונים - עותקים דיגיטליים של מקורות פיזיים כגון ספרים ותמונות, או מסמכים שנוצרו מלכתחילה בצורה דיגיטלית. תהליך הסיפרות (דיגיטליזציה) של מסמכים אלו מגביר את הנגישות והזמינות שלהם. ארכיונים החלו לספרת אוספים שלמים כדי שיהיו נגישים דרך האינטרנט. בנוסף, נרשמה עלייה דרמטית בכמות המידע שנוצר בצורה דיגיטלית על ידי תאגידים וממשלות. כתוצאה מכך, חוקרי מדעי הרוח סוקרים על ידי קריאה מרוחקת ואלגוריתמי ניתוח נוספים כמויות מידע הולכות וגדלות. אולם, מסמכי PDF ניתנים לעיבוד דיגיטלי מוגבל ולכן יש להמירם תחילה לקבצי טקסט.</p>
+                  <h2 dir="rtl" id="scope">קהל יעד</h2>
+                  <p dir="rtl">אם אתם מסכימים עם אחת מהנקודות הבאות, השיעור רלוונטי עבורכם:</p>
+                  <ul dir="rtl">
+                     <li>אתם עובדים עם מקורות מבוססי טקסט וצריכים לחלץ תוכן מתוך המקורות הללו</li>
+                     <li>הקבצים איתם אתם עובדים הם בפורמט PDF או יכולים להיות מומרים לפורמט זה</li>
+                     <li>אתם עובדים עם קורפוס גדול ואינכם רוצים לגעת בכל קובץ בנפרד</li>
+                     <li>אתם רוצים לבחון את הקורפוס שלכם על ידי <a href="/en/lessons/?topic=distant-reading">קריאה מרוחקת</a> ולכן צריכים שהקבצים יהיו בפורמט טקסט</li>
+                     <li>אין לכם גישה לתכנות מסחריות כגון Adebe Acrobat Professional או Abbyy FineReader</li>
+                  </ul>
+                  <h2 dir="rtl" id="objectives">מטרות השיעור</h2>
+                  <p dir="rtl">במונחים טכניים יותר, בשיעור זה תלמדו:</p>
+                  <ul dir="rtl">
+                     <li>זיהוי וחילוץ טקסטים ממסמכי PDF על ידי <a href="https://en.wikipedia.org/wiki/Optical_character_recognition">Optical Character Recognition (OCR)</a></li>
+                     <li>חילוץ טקסט מובנה מקבצי PDF</li>
+                     <li>חילוץ תמונות מובנות מקבצי PDF</li>
+                     <li>שילוב תמונות וקבצי PDF לתוך קובץ PDF יחיד</li>
+                     <li>ביצוע כל הפעולות הנ"ל על מספר רב של קבצים (עיבוד של קורפוס גדול בצורה אוטומטית)</li>
+                     <li>ניתוח קורפוס גדול על ידי <a href="https://en.wikipedia.org/wiki/Topic_model">Topic Modelling</a> כדי לקבל סקירה לגבי הנושאים שהקורפוס מכיל</li>
+                  </ul>
+                  <div dir="rtl" class="alert alert-info">
+                     <a href="https://en.wikipedia.org/wiki/Tesseract_(software)">Tesseract, ספריית ה-OCR</a> שבה משתמשים בשיעור זה תומכת במעל 110 שפות, כולל שפות שאינן מערביות.
+                  </div>
+                  <h1 dir="rtl" id="prerequisites">דרישות קודמות</h1>
+                  <h2 dir="rtl" id="skills">כישורים</h2>
+                  <p dir="rtl">עליכם להרגיש בנוח עם ה- Command line שבמחשב שלכם. משתמשי ווינדוס יכולים לעיין בלינק <a href="/en/lessons/intro-to-powershell">מדריך powershell למתחילים</a>. משתמשי לינוקס ו- מאק OS יכולים לעיין בלינק <a href="/en/lessons/intro-to-bash">מדריך bash למתחילים</a>.</p>
+                  <h2 dir="rtl" id="software">תוכנות</h2>
+                  <h3 dir="rtl" id="windows-10">ווינדוס 10</h3>
+                  <p dir="rtl">חלק מהמרכיבים של התכנה המבוססת לינוקס בה משתמשים בשיעור זה לא עובדים על מערכות ווינדוס. למרבה המזל, קיים פיתרון פשוט שבו תשתמשו בלינוקס כתת מערכת של ווינדוס. פתחו את  <a href="https://docs.microsoft.com/en-us/powershell/scripting/getting-started/starting-windows-powershell">PowerShell</a> כאדמיניסטרטור והריצו את הפקודה <code class="language-plaintext highlighter-rouge">Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux</code>. לאחר מכן התקינו את <a href="https://www.microsoft.com/store/apps/9N9TNGVNDL3Q">Ubuntu 18.04 LTS</a> מהחנות של מייקרוסופט. כעת <a href="https://docs.microsoft.com/en-us/windows/wsl/initialize-distro">להרצת</a> הלינוקס כתת מערכת של ווינדוס (זהו למעשה חלון שנפתח ומכיל את הטרמינל של לינוקס) לחצו על הסמן של Ubuntu בתפריט התחל וצרו חשבון משתמש.<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup></p>
+                  <p dir="rtl">כעת, לאחר שהלינוקס רץ עברו לתקייה הרצויה (למשל תיקיית הורדות), קראו לפקודת <code class="language-plaintext highlighter-rouge">bash</code> דרך הPowerShell, והתקינו את התכנות הדרושות על ידי הרצת הפקודות:</p>
+                  <div class="language-powershell highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code><span class="nf">bash</span><span class="w">
+</span></code></pre>
+                     </div>
+                  </div>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>ocrmypdf tesseract-ocr-all poppler-utils imagemagick
+</code></pre>
+                     </div>
+                  </div>
+                  <h3 dir="rtl" id="macos">מאק OS</h3>
+                  <p dir="rtl">התקנת כל התכנות ללא כלי עזר לניהול חבילות זו עבודה מתישה. לכן התקינו תחילה את  <a href="https://itunes.apple.com/us/app/xcode/id497799835">Command Line Tools for Xcode</a> ו <a href="https://brew.sh">Homebrew</a>. הן מאפשרות התקנה קלה של הכלים והתכנות הדרושים לשיעור זה. הפקודות שיש להריץ:</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>xcode-select <span class="nt">--install</span>
+/usr/bin/ruby <span class="nt">-e</span> <span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/master/install<span class="si">)</span><span class="s2">"</span>
+brew <span class="nb">install </span>ocrmypdf tesseract-lang poppler imagemagick
+</code></pre>
+                     </div>
+                  </div>
+                  <h3 dir="rtl" id="linux">לינוקס</h3>
+                  <p dir="rtl">ב <a href="https://ubuntu.com/download/desktop">Ubuntu 18.04 LTS</a> ומרבית מערכות הלינוקס מבוססות Debian ניתן להתקין את כל התכנות הדרושות על ידי <code class="language-plaintext highlighter-rouge">aptitude</code>.</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>apt <span class="nb">install </span>ocrmypdf tesseract-ocr-all poppler-utils imagemagick
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">על אף שכל הכלים הדרושים לשיעור זה מובנים ב- Ubuntu, מומלץ לעדכן אותם.</p>
+                  <h3 dir="rtl" id="topic-modelling">מידול הנושאים (Topic Modelling)</h3>
+                  <p dir="rtl">מידול הנושאים בשיעור זה יבוצע על ידי  <a href="https://dariah-de.github.io/TopicsExplorer/">DARIAH Topics Explorer</a>. זהו כלי פשוט לשימוש בעל ממשק גרפי. ניתן להוריד תכנת קוד פתוח לווינודס, לינוקס ומאק בלינק <a href="https://github.com/DARIAH-DE/TopicsExplorer/releases">הבא</a>.</p>
+                  <h2 dir="rtl" id="data">דאטא</h2>
+                  <p dir="rtl">במהלך שיעור זה נעבוד עם מסמכים היסטוריים <a href="https://web.archive.org/web/20200513194548/https://ilostat.ilo.org/resources/methods/icls/icls-documents//">מהכנס הבינלאומי הראשון של סטטיסטיקאי עבודה</a> מ 1923. הדאטא של כל כנסי העבר מסופק על ידי <a href="https://www.ilo.org/global/about-the-ilo/history/lang--en/index.htm">ארגון העבודה הבינלאומי (ILO)</a> והוא <a href="https://www.ilo.org/public/libdoc/ilo/ILO-SR/">זמין לכולם</a>.</p>
+                  <p dir="rtl">על מנת להקל עליכם לנווט במערכת הקבצים וליצור תיקיות, מצורפות מספר פקודות בסיסיות של Bash Command Line:</p>
+                  <ul dir="rtl">
+                     <li>הצגת הנתיב של התיקייה הנוכחית - <code dir="ltr" class="language-plaintext highlighter-rouge">pwd</code></li>
+                     <li>הצגת התוכן של התיקייה הנוכחית - <code dir="ltr" class="language-plaintext highlighter-rouge">ls</code></li>
+                     <li>הצגת כל הקבצי ה-PDF שנמצאים בתקייה הנוכחית - <code class="language-plaintext highlighter-rouge">ls *.pdf</code></li>
+                     <li>יצירת תקייה שנקראת proghist - <code dir="ltr" class="language-plaintext highlighter-rouge">mkdir proghist</code></li>
+                     <li>מעבר לתיקיית proghist - <code dir="ltr" class="language-plaintext highlighter-rouge">cd proghist</code></li>
+                     <li>פתיחת התיקייה הנוכחית ע"י הממשק הגרפי של מערכת התיקיות - <code dir="ltr" class="language-plaintext highlighter-rouge">open .</code></li>
+                     <li>מעבר אל תיקיית האב של התיקייה הנוכחית - <code dir="ltr" class="language-plaintext highlighter-rouge">cd ..</code></li>
+                     <li>מעבר אל תיקיית הבית של המשתמש הנוכחי - <code dir="ltr" class="language-plaintext highlighter-rouge">cd</code></li>
+                     <li>העתיקו את הפקודות ל <a href="https://explainshell.com/">explainshell.com</a> כדי לראות מה הן עושות בפועל</li>
+                  </ul>
+                  <div dir="rtl" class="alert alert-warning">
+                     במהלך שיעור זה, נניח ש-proghist היא תיקיית העבודה שלכם.
+                  </div>
+                  <p dir="rtl">שמרו את הקבצים הבאים לתיקיית העבודה שלכם:</p>
+                  <ul dir="rtl">
+                     <li>
+                        <a href="https://www.ilo.org/public/libdoc/ilo/ILO-SR/ILO-SR_N1_engl.pdf">סיווג של תעשיות</a><!--text extraction-->
+                     </li>
+                     <li>
+                        <a href="https://www.ilo.org/public/libdoc/ilo/ILO-SR/ILO-SR_N2_engl.pdf">סטטיסטיקות של שכר שעתי ושעות עבודה</a><!--ocr-->
+                     </li>
+                     <li>
+                        <a href="https://www.ilo.org/public/libdoc/ilo/ILO-SR/ILO-SR_N3_engl.pdf">סטטיסטיקות של תאונות תעשייתיות</a><!--text extraction-->
+                     </li>
+                     <li>
+                        <a href="https://www.ilo.org/public/libdoc/ilo/ILO-SR/ILO-SR_N4_engl.pdf">דו"ח הכנס</a><!--text extraction-->
+                     </li>
+                     <li>
+                        <a href="https://www.ilo.org/public/libdoc/ilo/P/09602/09602(1924-9-1)3-30.pdf">ביקורת העבודה הבינלאומית</a><!--text extraction-->
+                     </li>
+                  </ul>
+                  <p dir="rtl">לצורך הדגמת היכולת של חילוץ תמונה ושילוב קבצי PDF, נכלול בקורפוס שלנו קובץ שאינו קשור באופן ישיר לכנס הבינלאומי הראשון של סטטיסטיקאי עבודה מ-1923.</p>
+                  <ul dir="rtl">
+                     <li>
+                        <a href="https://www.ilo.org/public/libdoc/ilo/1923/23B09_5_engl.pdf">נאומים שנישאו בטקס ב-21 לאוקטובר, 1923</a> <!--extract images, combine documents-->
+                     </li>
+                  </ul>
+                  <p dir="rtl">למידול הנושאים של <a href="#use-topic-modelling-to-analyze-the-corpus">חקר המקרה</a> שלנו, עליכם להוריד קבצים נוספים במהלך השיעור.</p>
+                  <div dir="rtl" class="alert alert-danger">
+                     תמיד שמרו גיבוי של הדאטא לפני שתבצעו עליו שינויים בשיעור זה. זיהוי טקסט ושילוב של קבצי PDF עשויים לשנות את הקבצים המקוריים.
+                  </div>
+                  <h1 dir="rtl" id="assessing-your-pdfs">הערכת קבצי ה-PDF</h1>
+                  <p dir="rtl">כדי ששיעור זה יהיה מציאותי ככל הניתן, אתם תבצעו את הפעולות על חקר מקרה היסטורי אמיתי. אוסף הקבצים איתם תעבדו יהיה מתוך <a href="https://web.archive.org/web/20200513194548/https://ilostat.ilo.org/resources/methods/icls/icls-documents//">ארגון העבודה הבינלאומי (ILO)</a>, ספציפית, מתוך הכנס הבינלאומי הראשון של סטטיסטיקאי עבודה.</p>
+                  <p dir="rtl">אתם מעוניינים לדעת מה הנושאים שעליהם דנו סטטיסטיקאי העבודה. בשביל זה עליכם לנתח את כל המסמכים הזמינים מתוך הכנס על ידי שימוש באלגוריתם מידול נושאים. אלגוריתם זה דורש שכל המסמכים הם בפורמט מסמכי טקסט.</p>
+                  <p dir="rtl">מאגרי מידע גדולים יכולים ליצור תחושה מוטעית של עושר במידע, לכן המסמכים צריכים להיות נתונים לעיבוד איכותי. בשביל זה נשתמש בשיטות מדעיות כמו  <a href="https://en.wikipedia.org/wiki/Source_criticism">הערכת מקורות</a>. המסמכים כתובים באנגלית וכתובים באותו הפונט. המסמכים<code class="language-plaintext highlighter-rouge">ILO-SR_N1_engl.pdf</code>, <code class="language-plaintext highlighter-rouge">ILO-SR_N2_engl.pdf</code>, <code class="language-plaintext highlighter-rouge">ILO-SR_N3_engl.pdf</code> ו <code class="language-plaintext highlighter-rouge">ILO-SR_N4_engl.pdf</code> שייכים לאותה סדרת מסמכים. בנוסף, המסמך <code class="language-plaintext highlighter-rouge">ILO-SR_N2_engl.pdf</code> לא מכיל טקטס מובנה, והמסמך <code class="language-plaintext highlighter-rouge">23B09_5_engl.pdf</code> מכיל תמונות. אחת מהתמונות הללו מכילה טקסט.<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup> השלבים אותם תבצעו:</p>
+                  <ol dir="rtl">
+                     <li>תזהו את הטקסט ב- <code class="language-plaintext highlighter-rouge">ILO-SR_N2_engl.pdf</code></li>
+                     <li>תחלצו את הטקסט מתוך כל קבצי ה-PDF</li>
+                     <li>תחלצו את התמונות מתוך <code class="language-plaintext highlighter-rouge">23B09_5_engl.pdf</code></li>
+                     <li>לצורך ההדגמה, אתם תשלבו תמונות שונות ומסמכים למסמך PDF יחיד. זה יכול להיות שימושי אם תהליך הסריקה כולל קבצי תמונות בודדים שלא משולבים במסמך</li>
+                     <li>תעבדו טקסט רב על ידי אלגוריתם מידול נושאים</li>
+                  </ol>
+                  <h2 dir="rtl" id="text-recognition-in-pdf-files">זיהוי טקסט בקבצי PDF</h2>
+                  <p dir="rtl">לזיהוי הטקסט, אתם תשתמשו ב- <a href="https://ocrmypdf.readthedocs.io">OCRmyPDF</a>. זוהי תוכנה שמבוססת על תכנת קוד פתוח חדשני לזיהוי טקסט <a href="https://github.com/tesseract-ocr/tesseract">Tesseract</a>, שמתוחזקת ומפותחת על ידי גוגל. התכנה מזהה באופן אוטומטי את כיוון העמוד, מתקנת עמודים מסובבים (שנסרקו לא טוב למשל), מנקה רעש מהתמונה, ומוסיפה שכבת טקסט לתמונה שנוצרה על ידי OCR. הפרמטר היחיד שהתכנה מקבלת הוא שפת המסמך.</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>ocrmypdf <span class="nt">--language</span> eng <span class="nt">--deskew</span> <span class="nt">--clean</span> <span class="s1">'ILO-SR_N2_engl.pdf'</span> <span class="s1">'ILO-SR_N2_engl.pdf'</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <figure>
+                     <img src="./images/working-with-batches-of-pdf-files1.png" alt="Figure 1: The status messages of the software indicate recognition errors in the OCR process." />
+                     <figcaption>
+                        <p dir="rtl">איור 1: ההודעות שהתכנה מדפיסה מצביעות על כך שהיו שגיאות במהלך ביצוע תהליך ה-OCR.</p>
+                     </figcaption>
+                  </figure>
+                  <p dir="rtl">ההודעות שהתכנה מדפיסה מצביעות על כך שהיו שגיאות במהלך ביצוע תהליך ה-OCR (ראה איור 1) . אם שגיאות מסוג זה מופיעות באופן קבוע, יתכן ששווה לכתוב סקריפט לתיקון. ראה <a href="/en/lessons/cleaning-ocrd-text-with-regular-expressions">Cleaning OCR’d text with Regular Expressions</a>.</p>
+                  <div dir="rtl" class="alert alert-info">
+                     יש ל OCRmyPDF פרמטרים שימושיים לשיפור התוצאות. ראה <a href="https://ocrmypdf.readthedocs.io/en/latest/cookbook.html">documentation</a>. התוצר יכול להיראות מעט שונה בהתאם לגרסה שבה משתמשים.
+                  </div>
+                  <p dir="rtl">לעיבוד כל קבצי ה-PDF בתקיית העבודה שלכם בבת אחת: (OCRmyPDF מדלג באופן אוטומטי על קבצי PDF שכבר מכילים טקסט מובנה)</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>find <span class="nb">.</span> <span class="nt">-name</span> <span class="s1">'*.pdf'</span> <span class="nt">-exec</span> ocrmypdf <span class="nt">--language</span> eng <span class="nt">--deskew</span> <span class="nt">--clean</span> <span class="s1">'{}'</span> <span class="s1">'{}'</span> <span class="se">\;</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <h2 dir="rtl" id="extract-embedded-text-from-pdfs">חילוץ טקסט מובנה מקבצי PDF</h2>
+                  <p dir="rtl">לחילוץ הטקסט המובנה מקבצי PDF נשתמש ב- <a href="https://en.wikipedia.org/wiki/Poppler_(software)">Poppler</a>. זהו כלי command line חזק מאוד לעיבוד קבצי PDF שנמצא בשימוש נרחב בתעשייה. הריצו את הפקודה:</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>pdftotext <span class="s1">'ILO-SR_N1_engl.pdf'</span> <span class="s1">'ILO-SR_N1_engl.txt'</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">לעיבוד כל קבצי ה-PDF בתקיית העבודה שלכם בבת אחת: (הודעת השגיאה <code class="language-plaintext highlighter-rouge">Syntax Warning: Invalid Font Weight</code> אומרת שהקובץ מכיל פורמט שלא מתאים לסטנדרט של PDF. ניתן להתעלם משגיאות אלו)</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>find <span class="nb">.</span> <span class="nt">-name</span> <span class="s1">'*.pdf'</span> <span class="nt">-exec</span> pdftotext <span class="s1">'{}'</span> <span class="s1">'{}.txt'</span> <span class="se">\;</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">ברגע שחילצתם את כל הטקסט המובנה מקבצי ה-PDF, אתם יכולים לעיין בקבצים אלו בקלות. ניתן להשתמש בדפדפן התיקיות של ווינדוס, ב-Finder של מאק OS, או בפקודות Command Line כמו <code class="language-plaintext highlighter-rouge">grep</code>. אתם יכולים למשל להציג את כל ההופעות של המושג "statistics" על ידי ביצוע:</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code><span class="nb">grep</span> <span class="s1">'statistic'</span> <span class="nb">.</span> <span class="nt">-R</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">>ניתן לבצע בעזרת <code class="language-plaintext highlighter-rouge">grep</code> גם פעולות חיפוש מסובכות יותר (על ידי <a href="https://manpages.ubuntu.com/manpages/bionic/en/man1/grep.1.html#regular%20expressions">ביטויים רגולריים</a>). למשל, ניתן לחפש את כל ההופעות של "labour statistics" או "wage statistics":</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code><span class="nb">grep</span> <span class="nt">-E</span> <span class="s1">'labour statistics|wage statistics'</span> <span class="nb">.</span> <span class="nt">-R</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">ניתן להשתמש בביטויים רגולריים הכוללים מספרים. זה שימושי במיוחד להיסטוריונים. הפקודה הבאה מחפשת את כל ההופעות של שנים מהמאה ה-20:</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code><span class="nb">grep</span> <span class="nt">-E</span> <span class="s1">'19[0-9][0-9]'</span> <span class="nb">.</span> <span class="nt">-R</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">ברגע שחליצתם את כל הטקסט מתוך קבצי ה- PDF, הם יכולים לעבור ניתוח נוסף בעזרת שיטות <a href="/en/lessons/?topic=distant-reading">קריאה מרוחקת</a> כמו <a href="/en/lessons/topic-modeling-and-mallet">מידול נושאים</a>. אתם תשתמשו בשיטות אלה גם עבור חקר המקרה מאוחר יותר בשיעור זה.</p>
+                  <h2 dir="rtl" id="extract-embedded-images-from-pdfs">חילוץ תמונות מובנות מקבצי PDF</h2>
+                  <p dir="rtl">PDF הוא קובץ "מכולה" ויכול להכיל מספר תמונות מובנות בכל דף. ניתן להשתמש ב- Poppler גם כדי לחלץ תמונות. התכנה מאפשרת לנו לבחור פורמט יעד לתמונות המחולצות. מומלץ להשתמש בפורמט ללא כיווץ כמו PNG. הריצו את הפקודה הבאה:</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>pdfimages <span class="nt">-png</span> <span class="s1">'23B09_5_engl.pdf'</span> <span class="s1">'23B09_5_engl'</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <div dir="rtl" class="alert alert-info">
+                     למסמכים שנוצרו בצורה דיגיטליית, Poppler מחלץ את כל התמונות המובנות במסמך. זה לעיתים יכלול גם תמונות שנמצאות מחוץ לתחום הנראה במסמך או תמונות שמכוסות על ידי אובייקטים אחרים.
+                  </div>
+                  <p dir="rtl">לעיבוד כל קבצי ה-PDF בתקיית העבודה שלכם בבת אחת:</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>find <span class="nb">.</span> <span class="nt">-name</span> <span class="s1">'*.pdf'</span> <span class="nt">-exec</span> pdfimages <span class="nt">-png</span> <span class="s1">'{}'</span> <span class="s1">'{}'</span> <span class="se">\;</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">Poppler יכול לחלץ רק תמונות שמיוצגות במסמך כתמונות. אם אתם רוצים לחלץ תמונות שהגיעו מדף סרוק (ולא בפורמט תמונה), תוכלו להיעזר בשיעור <a href="/en/lessons/extracting-illustrated-pages">Extracting Illustrated Pages from Digital Libraries with Python</a>.</p>
+                  <h2 dir="rtl" id="combine-images-and-pdfs-into-a-single-pdf">שילוב תמונות ומסמכי PDF למסמך יחיד</h2>
+                  <p dir="rtl">למרות ש OCRmyPDF יכול לעבד קבצי תמונות ישירות, ישנם מקרים בהם תרצו ראשית לשלב את התמונות לתוך מסמך PDF. רוב הפורמטים של קבצי תמונה לא תומכים בריבוי דפים, כל דף של המסמך צריך להיות קובץ תמונה יחיד. בעזרת התכנה לעריכת תמונה <a href="https://imagemagick.org/">ImageMagick</a> ניתן לבצע זאת בצורה פשוטה מאוד, על ידי ביצוע הפקודה:</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>convert <span class="s1">'23B09_5_engl-002.png'</span> <span class="s1">'23B09_5_engl-004.png'</span> <span class="s1">'23B09_5_engl-006.png'</span> <span class="s1">'23B09_5_engl-007.png'</span> <span class="s1">'some-images-combined.pdf'</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">לשילוב כל קבצי התמונה בתקיית העבודה שלכם לתוך קובץ PDF יחיד, ניתן להריץ את הפקודה הבאה: (הפעולה עשויה לקחת מספר דקות)</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>convert <span class="s1">'*.png'</span> <span class="s1">'all-images-combined.pdf'</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">בעזרת Peppler ניתן גם לשלב מספר קבצי PDF לקובץ יחיד. הוא עושה זאת מהר הרבה יותר מ- ImageMagick וגם שומר את המאפיינים של המסמכים המקוריים. הריצו את הפקודה הבאה:</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>pdfunite <span class="s1">'ILO-SR_N1_engl.pdf'</span> <span class="s1">'ILO-SR_N2_engl.pdf'</span> <span class="s1">'ILO-SR_N3_engl.pdf'</span> <span class="s1">'ILO-SR_N4_engl.pdf'</span> <span class="s1">'some-pdfs-combined.pdf'</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <h2 dir="rtl" id="use-topic-modelling-to-analyze-the-corpus">שימוש במידול נושאים לצורך ניתוח הקורפוס</h2>
+                  <p dir="rtl">עכשיו, לאחר שביצעתם את כל השלבים לעיבוד PDF על מספר דוגמאות, אתם יכולים לחזור לשאלה ההיסטורית על מקרה החקר: מהם הנושאים שדנו בהם סטטיסטיקאי העבודה בכנס הבינלאומי של ה- ILO? על מנת לענות על השאלה הזאת בעזרת מידול נושאים, הצעדים הבאים נדרשים:</p>
+                  <ol dir="rtl">
+                     <li>הורדת הקורפוס</li>
+                     <li>הכנת ונקיון הקורפוס</li>
+                     <li>ביצוע מידול הנושאים</li>
+                     <li>>הערכת תוצאות מידול הנושאים</li>
+                  </ol>
+                  <div dir="rtl" class="alert alert-info">
+                     הורדת והכנת הקורפוס צורכים זמן ומשאבים רבים. בלינק <a href="https://zenodo.org/record/3582818/files/20191218-ilo-dataset.zip?download=1">הבא</a> תוכלו להוריד את ה-zip המוכן ולהגיע ישירות לשלב 3.
+                  </div>
+                  <h3 dir="rtl" id="download-the-corpus">הורדת הקורפוס</h3>
+                  <p dir="rtl">למניעת בלבול, צרו תקייה בעזרת <code class="language-plaintext highlighter-rouge">mkdir</code> ופתחו אותה בעזרת <code class="language-plaintext highlighter-rouge">cd</code>.</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code><span class="nb">mkdir </span>case_study
+<span class="nb">cd </span>case_study
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">אתם יכולים להוריד את הקורפוס <a href="https://www.ilo.org/public/libdoc/ilo/ILO-SR/">מהאתר של ILO</a>. כל המסמכים שבאנגלית מכילים ‘engl’ בשמם. הדאטא שוקל מעל ג'יגה, ולכן יכול לקחת זמן להורדה.</p>
+                  <p dir="rtl">לביצוע אוטומציה של שלב זה, ניתן להריץ את הפקודות הבאות שיורידו את כל המסמכים באנגלית (340 מסמכים):</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>curl https://www.ilo.org/public/libdoc/ilo/ILO-SR/ |
+<span class="nb">grep</span> <span class="nt">-o</span> <span class="s1">'ILO[^"]*engl[^"&gt;&lt;\/]*'</span> |
+<span class="nb">uniq</span> |
+<span class="nb">sed</span> <span class="s1">'s,ILO,https://www.ilo.org/public/libdoc/ilo/ILO-SR/ILO,g'</span> <span class="o">&gt;</span> list_of_files.txt
+xargs <span class="nt">-n</span> 1 curl <span class="nt">-O</span> &lt; list_of_files.txt
+<span class="nb">rm </span>list_of_files.txt
+</code></pre>
+                     </div>
+                  </div>
+                  <h3 dir="rtl" id="prepare-and-clean-up-the-corpus">הכנה ונקיון של הקורפוס</h3>
+                  <p dir="rtl">כעת אתם יכולים לעבד בקבוצה את כל קבצי ה-PDF שהורדו. ראשית בצעו זיהוי טקסט על כל הקבצים שלא מכילים טקסט מובנה, ולאחר מכן חלצו את כל הטקסט מתוך הקבצים. שלב זה יכול לקחת זמן. בצעו את הפקודה הבאה:</p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>find <span class="nb">.</span> <span class="nt">-name</span> <span class="s1">'*.pdf'</span> <span class="nt">-exec</span> ocrmypdf <span class="nt">--language</span> eng <span class="nt">--deskew</span> <span class="nt">--clean</span> <span class="s1">'{}'</span> <span class="s1">'{}'</span> <span class="se">\;</span> <span class="o">&amp;&amp;</span>
+find <span class="nb">.</span> <span class="nt">-name</span> <span class="s1">'*.pdf'</span> <span class="nt">-exec</span> pdftotext <span class="s1">'{}'</span> <span class="s1">'{}.txt'</span> <span class="se">\;</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <h3 dir="rtl" id="create-the-topic-model">ביצוע מידול הנושאים</h3>
+                  <p dir="rtl">על מנת לבצע מידול נושאים בעזרת DARIAH Topics Explorer, אתם לא צריכים שום ידע מתמטי מעמיק לגבי Latent Dirichlet Allocation (LDA) שבו משתמשים באלגוריתם.<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup> למרות זאת, נציין מספר הנחות שהמודל מניח:</p>
+                  <ul dir="rtl">
+                     <li>קורפוס מכיל מסמכים. כל מסמך מכיל מילים. מילים נושאות משמעות. הסדר (משפטים, פסקאות וכו') של המילים הוא חשוב מאוד להבנת התוכן, אך המודל מתעלם ממנו ומתייחס רק לתדירות המילים במסמך או בקורפוס.</li>
+                     <li>כמות הנושאים שהמודל ייצר היא פרמטר שנקבע על ידי המשתמש.</li>
+                     <li>לכל מילה יש הסתברות מסוימת להשתייך לנושא מסוים. האלגוריתם מוצא את ההסתברויות המתאימות לכל אחת מהמילים.</li>
+                     <li>מילים שמופיעות לעיתים תכופות מאוד אינן מספקות מידע רב. הן בדרך כלל יהיו מילות קישור כמו "and", “but" וכו'. לכן עדיף למודל להתעלם מהן</li>
+                     <li>מידול נושאים בעזרת LDA הוא לא דטרמיניסטי. כלומר יתכן שבריצות שונות נקבל תוצאות שונות. למרבה המזל, התוצאות בדרך כלל מתכנסות לכיוון תוצאה יציבה. הריצו מספר פעמים והשוו תוצאות, תוכלו במהרה להבחין שהנושאים נשארים זהים יחסית</li>
+                  </ul>
+                  <p dir="rtl">כעת פתחו את <a href="https://dariah-de.github.io/TopicsExplorer/">DARIAH Topics Explorer</a> ועקבו אחרי ההוראות שניתנות בתכנה. לאחר מכן:</p>
+                  <ol dir="rtl">
+                     <li>בחרו את כל 340 קבצי הטקסט.</li>
+                     <li>מחקו את 150 המילים הנפוצות ביותרץ לחילופין, אתם יכולים לטעות את הקובץ עם מילות הקישור באנגלית שנמצא ב <a href="https://github.com/DARIAH-DE/TopicsExplorer/tree/master/data">קורפוס הדוגמא</a> ב DARIAH Topics Explorer.</li>
+                     <li>בחרו את מספר הנושאים להיות 30, ואת מספר האיטרציות להיות 200. תוכלו לשחק עם מספר הנושאים ולבחור מספר בין 10 ל-100. ככל שתעלו את מספר האיטרציות תקבלו דיוק רב יותר אך תשלמו בזמן חישוב ארוך יותר.</li>
+                     <li>לחצו על Train Model. תהליך זה יכול לקחת זמן מה, תלוי בחוזק המחשב שלכם.</li>
+                  </ol>
+                  <h3 dir="rtl" id="evaluate-the-topic-model">הערכת ביצועים של מידול הנושאים</h3>
+                  <p dir="rtl">ה- <a href="https://dariah-de.github.io/TopicsExplorer/">DARIAH Topics Explorer</a> מכיל פונקציונליות של ממשק גרפי המאפשר לחקור ולהעריך ביצועים של מידול הנושאים ו-30 הנושאים שהתקבלו. בריצה זו, הנושא השני נראה כך (ראו איור 2).</p>
+                  <figure>
+                     <img src="./images/working-with-batches-of-pdf-files2.png" alt="איור 2: DARIAH Topics Explorer מראה מילים קשורות, מסמכים קשורים ומילים דומות לכל נושא." />
+                     <figcaption>
+                        <p dir="rtl">איור 2: DARIAH Topics Explorer מראה מילים קשורות, מסמכים קשורים ומילים דומות לכל נושא</p>
+                     </figcaption>
+                  </figure>
+                  <p dir="rtl">נושא זה מדבר על מספר סוגים של ביטוח סוציאלי, גם נושא המבוגרים וגם נושא קצבאות האבטלה מוזכרים בו. המילים מוצגות בסדר יורד של רלוונטיות ומספקות סקירה טובה של הנושא. ניתן גם לראות אילו מסמכים הם הקשורים ביותר לנושא זה. כפי שניתן לראות בנושאים הדומים, המודל מצא שנושא זה קרוב לנושאים תאונות, וחקיקה.</p>
+                  <p dir="rtl">כדי להמשיך לעבד ולראות את המידע בתכנה חיצונית, לחצו על כפתור Export Data. המאמר 'Parliament’s Debates about Infrastructure' של Jo Guldi מדגים איך מידול נושאים יכול להיות שימושי למחקרים היסטוריים.<sup id="fnref:4"><a href="#fn:4" class="footnote">4</a></sup></p>
+                  <h1 dir="rtl" id="hebrew_pdfs">עבודה עם מסמכי PDF בעברית</h1>
+                  <p dir="rtl">בספרייה OCRmyPDF קיימת תמיכה מובנית בשפה העברית. על מנת לבצע זיהוי טקסט של מסמך בעברית נריץ את הפקודות </p>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>ocrmypdf <span class="nt">--language</span> heb <span class="nt">--deskew</span> <span class="nt">--clean</span> <span class="s1">'hebrew_doc.pdf'</span> <span class="s1">'hebrew_doc.pdf'</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <div class="language-bash highlighter-rouge">
+                     <div class="highlight">
+                        <pre class="highlight"><code>pdftotext <span class="s1">'hebrew_doc.pdf'</span> <span class="s1">'hebrew_doc.txt'</span>
+</code></pre>
+                     </div>
+                  </div>
+                  <p dir="rtl">נראה דוגמא לשימוש בספרייה עבור מסמך בעברית. המסמך איתו נעבוד הוא מסמך שמקורו באתר <a href="https://www.haaretz.co.il/100/.premium-MAGAZINE-1.7306091">הארץ</a>, זוהי כתבה משנת 1967 של מתן אחיאסף.</p>
+                  <figure>
+                     <img src="./images/article.jpg" alt="Figure 1: The status messages of the software indicate recognition errors in the OCR process." />
+                     <figcaption>
+                        <p dir="rtl">איור 3: גזיר מהעיתון המקורי, הכתבה של מתן אחיאסף</p>
+                     </figcaption>
+                  </figure>
+                  <p dir="rtl">על מנת לוודא שהמסמך יהיה ללא שכבת טקסט, נוריד אותו כקובץ תמונה ונמירו ל-pdf. לאחר מכן נבצע OCR ואת חילוץ הטקסט:</p>
+                  <figure>
+                     <img src="./images/bash.jpg" alt="Figure 1: The status messages of the software indicate recognition errors in the OCR process." />
+                     <figcaption>
+                        <p dir="rtl">איור 4: הפקודות שיש להריץ על מנת לבצע OCR וחילוץ טקסט</p>
+                     </figcaption>
+                  </figure>
+                  <p dir="rtl">ניתן לראות שהטקסט שחולץ זהה כמעט לחלוטין לטקסט המקורי בכתבה.</p>
+                  <figure>
+                     <img src="./images/text.png" alt="Figure 1: The status messages of the software indicate recognition errors in the OCR process." />
+                     <figcaption>
+                        <p dir="rtl">איור 5: הטקסט שחולץ על ידי OCRmyPDF</p>
+                     </figcaption>
+                  </figure>
+                  <h1 dir="rtl" id="concluding-remarks">הערות לסיום</h1>
+                  <p dir="rtl">בעשורים האחרונים, PDF הפך לסטדנרט בפועל לאכסון והעברת מסמכי טקסט דיגיטלי<sup id="fnref:5"><a href="#fn:5" class="footnote">5</a></sup>, לא רק עבור פרויקטים שמתרכזים במקורות היסטוריים. ברוב התוכן שנוצר בצורה דיגיטלית (כמו אתרים ומסמכים אינטרקטיביים) עדיין לא גובשה הסכמה לגבי פורמט אכסון אחיד, לכן קבצי PDF נמצאים בשימוש נרחב במקרים הללו. לפעמים, מסמכי מקורות עכשויים מהווים אתגר מסובך לא פחות ממסמכים היסטוריים סרוקים.</p>
+                  <p dir="rtl">דו"ח מולר (Mueller Report) הוא הדוח הרשמי המתעד את ממצאי החקירה שבוצעה ע"י היועץ המיוחד רוברט מולר לגבי ההתערבות של הרוסים בבחירות האמריקאיות בשנת 2016. מולר חקר את מנהל קמפיין הבחירות של דונאלד טראמפ תחת האשמה שהתקיים שיתוף פעולה לא חוקי עם רוסיה. בחקירה טכנית שהתבצעה לאחר מכן ע"י דף ג'ונסון, עלה כי דו"ח מולר נוצר בצורה דיגיטלית, הודפס ונסרק לפחות פעם אחת, ונשלח לזיהוי טקסט בגרסה פגומה. חלק מן הטקסט והמידע המתאר את הטקסט נאבדו, מה שהקשה מאוד על העבודה עם המסמך. לא ידוע האם הפגיעה באיכות המסמך נעשתה בצורת מכוונת או שנוצרה כתוצאה מנהלים קשים ומסובכים. בכל מקרה, זה עשה את חייהם של החוקרים קשים יותר.<sup id="fnref:6"><a href="#fn:6" class="footnote">6</a></sup></p>
+                  <h2 dir="rtl" id="alternatives">תחלופות</h2>
+                  <p dir="rtl">שיעור זה התרכז בכלים פשוטים לשימוש וזמינים כתכנות קוד פתוח חינמיות. ישנן <a href="https://en.wikipedia.org/wiki/List_of_PDF_software">תחלופות</a> רבות (חלקן מסחריות וחלקן קוד פתוח) לעיבוד קבצי PDF<sup id="fnref:7"><a href="#fn:7" class="footnote">7</a> </sup>. השיעור <a href="/en/lessons/topic-modeling-and-mallet">Getting Started with Topic Modeling and MALLET</a> מכסה תחליפות רבות למידול נושאים.</p>
+                  <div dir="rtl" class="footnotes">
+                     <ol>
+                        <li id="fn:1">
+                           <p>אם נתקלתם בבעיות ב<a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">הפעלת</a> ה-WSL, בדקו ב <a href="https://docs.microsoft.com/en-us/windows/wsl/troubleshooting">troubleshooting</a>, <a href="https://aka.ms/wsldocs">documentation</a>, or the <a href="https://aka.ms/learnwsl">learning</a>. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+                        </li>
+                        <li id="fn:2">
+                           <p>במקרה של קורפוס גדול מאוד, מומלץ לבצע דגימה רנדומלית במקום מעבר על כל הקבצים. אם אין טקסט מובנה בחלק מהקבצים, ניתן להריץ תכנת זיהוי טקסט על כל הקורפוס. תכנת זיהוי הטקסט מזהה האם בקובץ אין טקסט מובנה, ואם אין היא מבצעת זיהוי.. <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+                        </li>
+                        <li id="fn:3">
+                           <p>אם אתם מעוניינים ללמוד יותר, ראו את המאמר  “Intuitive Guide to Latent Dirichlet Allocation.” של Ganegedara, Thushan שפורסם ב- Medium, August 23, 2018. https://towardsdatascience.com/light-on-math-machine-learning-intuitive-guide-to-latent-dirichlet-allocation-437c81220158.. <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+                        </li>
+                        <li id="fn:4">
+                           <p>Guldi, Jo. “Parliament’s Debates about Infrastructure: An Exercise in Using Dynamic Topic Models to Synthesize Historical Change.” <em>Technology and Culture</em> 60, no. 1 (2019): 1–33. https://doi.org/10.1353/tech.2019.0000. <a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+                        </li>
+                        <li id="fn:5">
+                           <p>הפרק הרביעי מפרט את ההיסטוריה של הפורמט PDF ואת המהפכה הסוציו-טכנולוגית. ראה  Gitelman, Lisa. <em>Paper Knowledge: Toward a Media History of Documents.</em> Durham: Duke University Press, 2014. <a href="#fnref:5" class="reversefootnote">&#8617;</a></p>
+                        </li>
+                        <li id="fn:6">
+                           <p>Johnson, Duff. “A Technical and Cultural Assessment of the Mueller Report PDF.” <em>PDF Association</em> (blog), April 19, 2019. https://www.pdfa.org/a-technical-and-cultural-assessment-of-the-mueller-report-pdf/. <a href="#fnref:6" class="reversefootnote">&#8617;</a></p>
+                        </li>
+                        <li id="fn:7">
+                           <p>שווה במיוחד לציין את דפי ה-wiki הגרמניים של קהילת Ubuntu לגבי <a href="https://wiki.ubuntuusers.de/PDF/">PDF</a> ו <a href="https://wiki.ubuntuusers.de/Texterkennung/">OCR</a>. דפים אלה מכילים קישורים לתכנות חינמיות לעבודה עם קבצי PDF ושיפור טכנולוגיית זיהוי טקסט. למרבה הצער, אין תרגומים לדפים האלו וצריך להשתמש בשירות תרגום. <a href="#fnref:7" class="reversefootnote">&#8617;</a></p>
+                        </li>
+                     </ol>
+                  </div>
+               </div>
+            </div>
+      </div>
+      </div>
+      </main>
+   </body>
+</html>
